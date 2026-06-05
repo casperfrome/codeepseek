@@ -112,9 +112,38 @@ The launcher resolves the backend folder in this order:
 
 ## Usage
 
-1. Launch `MoonBridgeSwitcher.exe`.
-2. On first run, point it at your moon-bridge backend folder if it isn't auto-detected.
-3. The panel opens once the bridge is ready. Closing the window stops the backend it started.
+### After building
+
+The build script drops two files in `.\publish\`:
+
+```
+publish\
+├── MoonBridgeSwitcher.exe   ← double-click this
+└── mbcontrol.exe            ← must stay in the same folder
+```
+
+You can copy the whole `publish\` folder anywhere you like — just keep both files together.
+
+### First run
+
+1. **Double-click `MoonBridgeSwitcher.exe`**.
+2. If the backend directory isn't auto-detected, a folder picker opens — point it at your
+   moon-bridge folder (the one containing `moonbridge.exe`, `config.yml`, `mb_config.json`).
+   Your choice is saved to `%LocalAppData%\MoonBridgeSwitcher\config.json` and won't be
+   asked again.
+3. The control panel loads inside the window once the bridge is ready (a few seconds).
+
+### What you can do in the panel
+
+- **Switch models** — change the active model without restarting anything.
+- **Edit config** — tweak `mb_config.json` fields (API keys, endpoints, options) in-browser.
+- **Toggle Codex routing** — flip the Codex-compatible routing on or off.
+- **Check DeepSeek balance** — view remaining API credit at a glance.
+
+### Stopping
+
+Close the window — it shuts down `mbcontrol.exe` and the `moonbridge.exe` it started.
+If you launched `mbcontrol.exe` separately, close that process instead.
 
 ## Security note
 
@@ -236,9 +265,37 @@ dotnet publish launcher/MoonBridgeSwitcher.csproj -c Release -r win-x64 -o publi
 
 ## 使用
 
-1. 运行 `MoonBridgeSwitcher.exe`。
-2. 首次运行时，如未自动探测到，请指向你的 moon-bridge 后端目录。
-3. 桥就绪后会自动打开面板。关闭窗口会停止由它启动的后端。
+### 构建完成后
+
+构建脚本会把两个文件输出到 `.\publish\`：
+
+```
+publish\
+├── MoonBridgeSwitcher.exe   ← 双击这个
+└── mbcontrol.exe            ← 必须和上面那个放在一起
+```
+
+可以把整个 `publish\` 文件夹复制到任意位置，只需保持两个文件同级即可。
+
+### 首次运行
+
+1. **双击 `MoonBridgeSwitcher.exe`**。
+2. 如果后端目录未被自动探测到，会弹出文件夹选择对话框——指向你的 moon-bridge 目录
+   （即含有 `moonbridge.exe`、`config.yml`、`mb_config.json` 的那个文件夹）。
+   选择结果保存到 `%LocalAppData%\MoonBridgeSwitcher\config.json`，下次不会再弹。
+3. 稍等几秒，桥服务就绪后控制面板会自动载入到窗口中。
+
+### 面板功能
+
+- **切换模型** —— 无需重启，直接切换当前使用的模型。
+- **编辑配置** —— 在浏览器中修改 `mb_config.json`（API Key、端点、选项等）。
+- **切换 Codex 路由** —— 一键开关 Codex 兼容路由。
+- **查询 DeepSeek 余额** —— 随时查看 API 剩余额度。
+
+### 停止
+
+关闭窗口即可——程序会同时关闭它启动的 `mbcontrol.exe` 和 `moonbridge.exe`。
+若是单独启动的 `mbcontrol.exe`，则直接结束该进程。
 
 ## 安全提示
 
