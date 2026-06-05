@@ -4,9 +4,9 @@ using System.Net.Http;
 namespace MoonBridgeSwitcher;
 
 /// <summary>
-/// Owns the lifecycle of the external moon-bridge backend: probing whether it is
-/// already running, starting it as a hidden PowerShell process, and tearing it down
-/// on exit (only if this app was the one that started it).
+/// Owns the lifecycle of the moon-bridge control backend: probing whether it is
+/// already running, starting the <c>mbcontrol</c> Go binary hidden, and tearing it
+/// down on exit (only if this app was the one that started it).
 /// </summary>
 sealed class BackendController
 {
@@ -45,27 +45,51 @@ sealed class BackendController
         return false;
     }
 
+    /// <summary>Name of the Go control binary that replaces the old mb_control.ps1.</summary>
+    const string ControlExe = "mbcontrol.exe";
+
     /// <summary>
-    /// Starts the backend via a hidden <c>powershell.exe</c> running <c>mb_control.ps1</c>.
-    /// Throws on failure so the caller can surface the error.
+    /// Locates <c>mbcontrol.exe</c>: preferred next to this launcher, otherwise in the
+    /// backend directory. Returns null if neither exists.
+    /// </summary>
+    string? ResolveControlBinary()
+    {
+        var beside = Path.Combine(AppContext.BaseDirectory, ControlExe);
+        if (File.Exists(beside)) return beside;
+
+        var inBackend = Path.Combine(_config.BackendDir, ControlExe);
+        if (File.Exists(inBackend)) return inBackend;
+
+        return null;
+    }
+
+    /// <summary>
+    /// Starts the backend by launching the hidden <c>mbcontrol.exe</c> Go control
+    /// server against the backend directory. Throws on failure so the caller can
+    /// surface the error.
     /// </summary>
     public void Start()
     {
-        var psi = new ProcessStartInfo("powershell.exe",
-            "-NoProfile -ExecutionPolicy Bypass -File \"mb_control.ps1\"")
+        var exe = ResolveControlBinary()
+            ?? throw new FileNotFoundException(
+                $"{ControlExe} not found next to the launcher or in:\n{_config.BackendDir}\n\n" +
+                "Build it with:  go build -o mbcontrol.exe ./control");
+
+        var psi = new ProcessStartInfo(exe,
+            $"-root \"{_config.BackendDir}\" -no-browser")
         {
             WorkingDirectory = _config.BackendDir,
             UseShellExecute = false,
             CreateNoWindow = true,
             WindowStyle = ProcessWindowStyle.Hidden
         };
-        psi.EnvironmentVariables["MB_NO_BROWSER"] = "1"; // stop the ps1 from opening a browser
+        psi.EnvironmentVariables["MB_NO_BROWSER"] = "1"; // belt-and-suspenders alongside -no-browser
         _backend = Process.Start(psi);
         _startedBackend = true;
     }
 
     /// <summary>
-    /// Stops the backend we started: kills the hidden PowerShell process tree (which
+    /// Stops the backend we started: kills the hidden mbcontrol.exe process tree (which
     /// includes the moonbridge.exe it launched), then sweeps up any leftover
     /// moonbridge.exe still rooted in the backend directory. No-op if we reused an
     /// instance we didn't start.

@@ -49,7 +49,7 @@ sealed class MainForm : Form
             MessageBox.Show(this,
                 "No moon-bridge backend folder was selected.\n\n" +
                 $"Set it via the {AppConfig.EnvVar} environment variable, or pick the folder " +
-                "containing config.yml and mb_control.ps1 on next launch.",
+                "containing config.yml and mb_config.json on next launch.",
                 "Moon Bridge", MessageBoxButtons.OK, MessageBoxIcon.Error);
             Close();
             return;

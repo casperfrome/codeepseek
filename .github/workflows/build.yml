@@ -14,28 +14,46 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # ---- Go control backend (mbcontrol.exe) ----
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.25"
+          cache: false # stdlib-only module, no go.sum to cache
+
+      - name: Go vet
+        working-directory: control
+        run: go vet ./...
+
+      - name: Build mbcontrol.exe
+        working-directory: control
+        env:
+          GOOS: windows
+          GOARCH: amd64
+        run: go build -o ../publish/mbcontrol.exe .
+
+      # ---- C# WinForms launcher (MoonBridgeSwitcher.exe) ----
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "8.0.x"
 
-      - name: Restore
-        run: dotnet restore src/MoonBridgeSwitcher.csproj
+      - name: Publish launcher (single-file, self-contained)
+        run: dotnet publish launcher/MoonBridgeSwitcher.csproj -c Release -r win-x64 -o publish
 
-      - name: Build
-        run: dotnet build src/MoonBridgeSwitcher.csproj -c Release --no-restore
-
-      - name: Publish (single-file, self-contained)
-        run: dotnet publish src/MoonBridgeSwitcher.csproj -c Release -r win-x64 -o publish
-
-      - name: Upload artifact
+      # ---- artifacts / release ----
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: MoonBridgeSwitcher-win-x64
-          path: publish/MoonBridgeSwitcher.exe
+          name: moon-bridge-switcher-win-x64
+          path: |
+            publish/MoonBridgeSwitcher.exe
+            publish/mbcontrol.exe
 
       - name: Attach to release
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
-          files: publish/MoonBridgeSwitcher.exe
+          files: |
+            publish/MoonBridgeSwitcher.exe
+            publish/mbcontrol.exe

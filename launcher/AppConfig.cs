@@ -5,12 +5,12 @@ namespace MoonBridgeSwitcher;
 
 /// <summary>
 /// Resolves and persists the location of the external moon-bridge backend
-/// (the folder containing <c>config.yml</c> and <c>mb_control.ps1</c>) plus the
+/// (the folder containing <c>config.yml</c> and <c>mb_config.json</c>) plus the
 /// local control-server endpoint the panel is served from.
 /// </summary>
 sealed class AppConfig
 {
-    /// <summary>Folder that holds <c>config.yml</c> and <c>mb_control.ps1</c>.</summary>
+    /// <summary>Folder that holds <c>config.yml</c> and <c>mb_config.json</c>.</summary>
     public string BackendDir { get; set; } = "";
 
     /// <summary>Port the moon-bridge control server listens on.</summary>
@@ -29,11 +29,11 @@ sealed class AppConfig
 
     static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
 
-    /// <summary>A directory is a valid backend if it contains both required files.</summary>
+    /// <summary>A directory is a valid backend if it has the files the Go control server needs.</summary>
     public static bool IsValidBackendDir(string? dir) =>
         !string.IsNullOrWhiteSpace(dir) &&
         File.Exists(Path.Combine(dir, "config.yml")) &&
-        File.Exists(Path.Combine(dir, "mb_control.ps1"));
+        File.Exists(Path.Combine(dir, "mb_config.json"));
 
     /// <summary>
     /// Loads config (creating defaults if absent) and resolves <see cref="BackendDir"/>
@@ -90,7 +90,7 @@ sealed class AppConfig
     {
         using var dialog = new FolderBrowserDialog
         {
-            Description = "Select the moon-bridge backend folder (contains config.yml and mb_control.ps1).",
+            Description = "Select the moon-bridge backend folder (contains config.yml and mb_config.json).",
             UseDescriptionForTitle = true,
             ShowNewFolderButton = false
         };
@@ -101,7 +101,7 @@ sealed class AppConfig
         if (!IsValidBackendDir(dialog.SelectedPath))
         {
             MessageBox.Show(owner,
-                "The selected folder does not contain config.yml and mb_control.ps1.",
+                "The selected folder does not contain config.yml and mb_config.json.",
                 "Moon Bridge", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return false;
         }
