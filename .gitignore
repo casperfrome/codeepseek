@@ -26,7 +26,7 @@ packages/
 Thumbs.db
 .DS_Store
 
-# Secrets / runtime files that live in the moon-bridge backend dir. Never commit
+# Secrets / runtime files that live in the codeepseek backend dir. Never commit
 # them even if a copy ends up here: mb_config.json holds real API keys.
 mb_config.json
 config.yml

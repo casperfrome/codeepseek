@@ -1,6 +1,6 @@
 # codeepseek
 
-A lightweight Windows desktop launcher + control panel for **moon-bridge**.
+A lightweight Windows desktop launcher + control panel for **codeepseek**.
 Double-click it to start the bridge in the background and get a clean window for
 switching models, editing your config, toggling Codex routing, and checking your
 DeepSeek balance — no terminal, no browser tab.
@@ -20,7 +20,7 @@ MoonBridgeSwitcher.exe  ──starts──▶  mbcontrol.exe  ──starts──
 ```
 
 > **Heads up:** this project is the *launcher + control layer*. It does **not** include
-> the moon-bridge backend itself. You must already have a moon-bridge installation — the
+> the codeepseek backend itself. You must already have a codeepseek installation — the
 > folder containing `config.yml`, `mb_config.json`, and `moonbridge.exe`. See
 > [Backend requirement](#backend-requirement).
 
@@ -36,11 +36,11 @@ MoonBridgeSwitcher.exe  ──starts──▶  mbcontrol.exe  ──starts──
 
 ## Backend requirement
 
-`mbcontrol.exe` operates on a **moon-bridge** backend directory, which must contain:
+`mbcontrol.exe` operates on a **codeepseek** backend directory, which must contain:
 
 - `config.yml` — generated bridge config
 - `mb_config.json` — the panel's editable source of truth (**holds API keys**)
-- `moonbridge.exe` — the bridge binary (or the moon-bridge Go source, to fall back to `go run ./cmd/moonbridge`)
+- `moonbridge.exe` — the bridge binary (or the codeepseek Go source, to fall back to `go run ./cmd/moonbridge`)
 
 The control server listens on **`http://127.0.0.1:38450/`** and expects the bridge on
 **`127.0.0.1:38440`**.
@@ -49,7 +49,7 @@ The control server listens on **`http://127.0.0.1:38450/`** and expects the brid
 
 - Windows 10 / 11 (x64)
 - [WebView2 Runtime](https://developer.microsoft.com/microsoft-edge/webview2/) (pre-installed on current Windows)
-- A working moon-bridge backend (see above)
+- A working codeepseek backend (see above)
 - To **build** from source: [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) and [Go 1.25+](https://go.dev/dl/)
 
 ## Build
@@ -128,7 +128,7 @@ You can copy the whole `publish\` folder anywhere you like — just keep both fi
 
 1. **Double-click `MoonBridgeSwitcher.exe`**.
 2. If the backend directory isn't auto-detected, a folder picker opens — point it at your
-   moon-bridge folder (the one containing `moonbridge.exe`, `config.yml`, `mb_config.json`).
+   codeepseek folder (the one containing `moonbridge.exe`, `config.yml`, `mb_config.json`).
    Your choice is saved to `%LocalAppData%\MoonBridgeSwitcher\config.json` and won't be
    asked again.
 3. The control panel loads inside the window once the bridge is ready (a few seconds).
@@ -147,7 +147,7 @@ If you launched `mbcontrol.exe` separately, close that process instead.
 
 ## Security note
 
-`mb_config.json` contains real API keys and lives in your moon-bridge backend directory —
+`mb_config.json` contains real API keys and lives in your codeepseek backend directory —
 **not** in this repo. It (and `config.yml`, `bridge*.log`) is listed in `.gitignore`
 so it can never be committed by accident. Never paste your `mb_config.json` into the repo.
 
@@ -161,7 +161,7 @@ so it can never be committed by accident. Never paste your `mb_config.json` into
 
 # codeepseek（中文说明）
 
-一个轻量的 Windows 桌面启动器 + 控制面板，用于 **moon-bridge**。双击即可在后台启动桥服务，
+一个轻量的 Windows 桌面启动器 + 控制面板，用于 **codeepseek**。双击即可在后台启动桥服务，
 并打开一个简洁窗口来切换模型、编辑配置、切换 Codex 路由、查询 DeepSeek 余额——无需终端，
 无需浏览器标签页。
 
@@ -177,8 +177,8 @@ MoonBridgeSwitcher.exe  ──启动──▶  mbcontrol.exe  ──启动──
    (WebView2 窗口)                  (:38450 面板+API)          (:38440 桥服务)
 ```
 
-> **注意：** 本项目是*启动器 + 控制层*，**不包含** moon-bridge 后端本身。你需要已经
-> 安装好 moon-bridge——即包含 `config.yml`、`mb_config.json` 和 `moonbridge.exe`
+> **注意：** 本项目是*启动器 + 控制层*，**不包含** codeepseek 后端本身。你需要已经
+> 安装好 codeepseek——即包含 `config.yml`、`mb_config.json` 和 `moonbridge.exe`
 > 的目录。详见[后端依赖](#后端依赖)。
 
 ## 功能
@@ -193,11 +193,11 @@ MoonBridgeSwitcher.exe  ──启动──▶  mbcontrol.exe  ──启动──
 
 ## 后端依赖
 
-`mbcontrol.exe` 在一个 **moon-bridge** 后端目录上工作，该目录必须包含：
+`mbcontrol.exe` 在一个 **codeepseek** 后端目录上工作，该目录必须包含：
 
 - `config.yml` —— 生成的桥配置
 - `mb_config.json` —— 面板的可编辑数据源（**含 API Key**）
-- `moonbridge.exe` —— 桥二进制（或 moon-bridge Go 源码，用于回退到 `go run ./cmd/moonbridge`）
+- `moonbridge.exe` —— 桥二进制（或 codeepseek Go 源码，用于回退到 `go run ./cmd/moonbridge`）
 
 控制服务器监听 **`http://127.0.0.1:38450/`**，桥服务在 **`127.0.0.1:38440`**。
 
@@ -205,7 +205,7 @@ MoonBridgeSwitcher.exe  ──启动──▶  mbcontrol.exe  ──启动──
 
 - Windows 10 / 11（x64）
 - [WebView2 运行时](https://developer.microsoft.com/microsoft-edge/webview2/)（新版 Windows 已自带）
-- 可用的 moon-bridge 后端（见上）
+- 可用的 codeepseek 后端（见上）
 - 如需**从源码构建**：[.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) 与 [Go 1.25+](https://go.dev/dl/)
 
 ## 构建
@@ -280,7 +280,7 @@ publish\
 ### 首次运行
 
 1. **双击 `MoonBridgeSwitcher.exe`**。
-2. 如果后端目录未被自动探测到，会弹出文件夹选择对话框——指向你的 moon-bridge 目录
+2. 如果后端目录未被自动探测到，会弹出文件夹选择对话框——指向你的 codeepseek 目录
    （即含有 `moonbridge.exe`、`config.yml`、`mb_config.json` 的那个文件夹）。
    选择结果保存到 `%LocalAppData%\MoonBridgeSwitcher\config.json`，下次不会再弹。
 3. 稍等几秒，桥服务就绪后控制面板会自动载入到窗口中。
@@ -299,7 +299,7 @@ publish\
 
 ## 安全提示
 
-`mb_config.json` 含有真实 API Key，位于你的 moon-bridge 后端目录中——**不在**本仓库内。
+`mb_config.json` 含有真实 API Key，位于你的 codeepseek 后端目录中——**不在**本仓库内。
 它（以及 `config.yml`、`bridge*.log`）已列入 `.gitignore`，不会被误提交。请勿把
 `mb_config.json` 粘贴进仓库。
 

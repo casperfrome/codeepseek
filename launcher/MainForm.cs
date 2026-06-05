@@ -5,7 +5,7 @@ namespace MoonBridgeSwitcher;
 
 /// <summary>
 /// Main window: resolves the backend location, ensures the backend is running, then
-/// embeds the moon-bridge config panel in a WebView2. The backend is torn down on close.
+/// embeds the codeepseek config panel in a WebView2. The backend is torn down on close.
 /// </summary>
 sealed class MainForm : Form
 {
@@ -17,7 +17,7 @@ sealed class MainForm : Form
     {
         Dock = DockStyle.Fill,
         TextAlign = ContentAlignment.MiddleCenter,
-        Text = "正在启动 Moon Bridge…",
+        Text = "正在启动 codeepseek…",
         ForeColor = Color.White,
         Font = new Font("Microsoft YaHei", 12f)
     };
@@ -26,7 +26,7 @@ sealed class MainForm : Form
     {
         _backend = new BackendController(_config);
 
-        Text = "🌙 Moon Bridge 模型配置";
+        Text = "codeepseek 模型配置";
         Width = 940;
         Height = 920;
         StartPosition = FormStartPosition.CenterScreen;
@@ -47,10 +47,10 @@ sealed class MainForm : Form
         if (!AppConfig.IsValidBackendDir(_config.BackendDir) && !_config.PromptForBackendDir(this))
         {
             MessageBox.Show(this,
-                "No moon-bridge backend folder was selected.\n\n" +
+                "No codeepseek backend folder was selected.\n\n" +
                 $"Set it via the {AppConfig.EnvVar} environment variable, or pick the folder " +
                 "containing config.yml and mb_config.json on next launch.",
-                "Moon Bridge", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                "codeepseek", MessageBoxButtons.OK, MessageBoxIcon.Error);
             Close();
             return;
         }
@@ -71,7 +71,7 @@ sealed class MainForm : Form
 
         if (!await _backend.WaitForBackendAsync(25000))
         {
-            _status.Text = $"启动超时：未能连上控制服务器 ({_config.Port})。\n请检查 moon-bridge 后端日志。";
+            _status.Text = $"启动超时：未能连上控制服务器 ({_config.Port})。\n请检查 codeepseek 后端日志。";
             return;
         }
 

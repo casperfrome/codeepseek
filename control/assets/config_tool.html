@@ -103,14 +103,14 @@
   </div>
 
   <div class="card">
-    <h2>Codex 全局模型（原生 GPT ↔ Moon Bridge）</h2>
+    <h2>Codex 全局模型（原生 GPT ↔ codeepseek）</h2>
     <div class="field">
       <div class="hint" style="margin-bottom:10px">
         此开关只改 <b>全局</b> Codex 配置 <code id="codexHome">~/.codex</code> 里的
         <code>config.toml</code>（每次切换前自动备份为 <code>.mb-bak-时间戳</code>），
         让你直接运行 <code>codex</code> / <code>codex app</code> 时在
         <b>原生 GPT（<span id="nativeModel">gpt-5.5</span>）</b> 与
-        <b>走 Moon Bridge（DeepSeek 等）</b> 之间切换。
+        <b>走 codeepseek（DeepSeek 等）</b> 之间切换。
         不影响 <code>4_run_codex.bat</code> 用的仓库专用配置。
       </div>
       <div style="margin-bottom:12px">
@@ -119,7 +119,7 @@
     </div>
     <div class="actions">
       <button id="btnCodexNative">🔙 切换到原生 GPT</button>
-      <button id="btnCodexBridge">↩ 切回 Moon Bridge</button>
+      <button id="btnCodexBridge">↩ 切回 codeepseek</button>
     </div>
     <div class="row" style="margin-top:16px">
       <div>
@@ -133,7 +133,7 @@
     </div>
     <div class="actions" style="margin-top:12px">
       <button class="primary" id="btnOpenCodex">🚀 一键打开 Codex</button>
-      <span class="hint">用仓库专用 <code>CODEX_HOME</code> 启动 <code>codex app</code>（桌面版），确保走 Moon Bridge→DeepSeek。点击会先自动保存路径。</span>
+      <span class="hint">用仓库专用 <code>CODEX_HOME</code> 启动 <code>codex app</code>（桌面版），确保走 codeepseek→DeepSeek。点击会先自动保存路径。</span>
     </div>
     <div style="margin-top:14px"><div id="codexLog">就绪。</div></div>
   </div>
@@ -181,7 +181,7 @@
       </div>
     </div>
     <details>
-      <summary>各协议在本项目（Codex → Moon Bridge → DeepSeek）的优缺点</summary>
+      <summary>各协议在本项目（Codex → codeepseek → DeepSeek）的优缺点</summary>
       <div class="hint" style="line-height:1.7; margin-top:8px">
         <b style="color:var(--ok)">anthropic（推荐 / 默认）</b> — 端点 <code>https://api.deepseek.com/anthropic</code>。DeepSeek 官方为 agentic 编码推荐；完整工具调用；支持 <code>cache_control</code> 显式 Prompt 缓存断点；配合 <code>deepseek_v4</code> 扩展把 reasoning effort（high/xhigh→max）映射为深度思考。本仓库已实测可用。<br>
         <b style="color:var(--accent)">openai-chat（备选）</b> — 端点 <code>https://api.deepseek.com</code>（<code>/v1/chat/completions</code> OpenAI 兼容）。生态最通用，可作 anthropic 端点异常时的回退；但 reasoning 透传 / 档位控制较弱，缓存为 DeepSeek 自动上下文缓存、无法用断点精细控制，保真度略低。<br>
@@ -468,7 +468,7 @@ async function refreshCodexMode(){
     if (j.nativeModel) $('nativeModel').textContent = j.nativeModel;
     const t = $('codexModeText');
     if (j.mode === 'native'){ t.textContent = '原生 GPT（' + (j.nativeModel||'gpt') + '）'; t.style.color = 'var(--ok)'; }
-    else if (j.mode === 'bridge'){ t.textContent = '走 Moon Bridge（DeepSeek 等）'; t.style.color = 'var(--accent)'; }
+    else if (j.mode === 'bridge'){ t.textContent = '走 codeepseek（DeepSeek 等）'; t.style.color = 'var(--accent)'; }
     else { t.textContent = '未找到全局 config.toml'; t.style.color = 'var(--warn)'; }
   }catch(e){ $('codexModeText').textContent = '检测失败：' + e.message; $('codexModeText').style.color = 'var(--err)'; }
 }
@@ -482,9 +482,9 @@ $('btnCodexNative').addEventListener('click', async () => {
 });
 
 $('btnCodexBridge').addEventListener('click', async () => {
-  busy(true); codexLog('切回 Moon Bridge 中…');
+  busy(true); codexLog('切回 codeepseek 中…');
   try { await api('/api/codex-bridge', { method:'POST' });
-        codexLog('✓ 已切回 Moon Bridge。保持本桥服务开着，运行 codex 即走 DeepSeek 等。', 'ok'); }
+        codexLog('✓ 已切回 codeepseek。保持本桥服务开着，运行 codex 即走 DeepSeek 等。', 'ok'); }
   catch(e){ codexLog('✗ 切换失败：' + e.message, 'err'); }
   await refreshCodexMode(); busy(false);
 });

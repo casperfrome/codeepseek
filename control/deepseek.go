@@ -81,7 +81,7 @@ func (s *server) deepseekBalance() (map[string]any, error) {
 }
 
 // openCodex launches `codex app <workdir>` with CODEX_HOME pointed at the
-// repo-local .codex so it routes through Moon Bridge regardless of the global toggle.
+// repo-local .codex so it routes through codeepseek regardless of the global toggle.
 func (s *server) openCodex() (map[string]any, error) {
 	appPath, workdir := s.codexAppPath, s.codexWorkdir
 	if cfg, err := loadMBConfig(s.root); err == nil {

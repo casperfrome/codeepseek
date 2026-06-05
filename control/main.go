@@ -1,4 +1,4 @@
-// Command mbcontrol is the Moon Bridge control server: a small HTTP server that
+// Command mbcontrol is the codeepseek control server: a small HTTP server that
 // serves the config panel, owns the moonbridge bridge child process, and exposes
 // the JSON API the panel uses to switch models / restart / regen Codex config.
 //
@@ -27,7 +27,7 @@ const (
 
 // server holds the resolved configuration and live process state.
 type server struct {
-	root      string // moon-bridge backend directory
+	root      string // codeepseek backend directory
 	port      int    // control port (default 38450)
 	noBrowser bool
 
@@ -55,7 +55,7 @@ func (s *server) globalCodexToml() string {
 
 func main() {
 	var (
-		root      = flag.String("root", "", "moon-bridge backend directory (default: current working directory)")
+		root      = flag.String("root", "", "codeepseek backend directory (default: current working directory)")
 		port      = flag.Int("port", 38450, "control server port")
 		noBrowser = flag.Bool("no-browser", false, "do not open the panel in a browser; hide the bridge window")
 	)
@@ -88,7 +88,7 @@ func main() {
 	// Required backend files.
 	for _, f := range []string{s.configYml(), s.configJson()} {
 		if _, err := os.Stat(f); err != nil {
-			log.Fatalf("[control] missing %s (is -root the moon-bridge folder?)", f)
+			log.Fatalf("[control] missing %s (is -root the codeepseek folder?)", f)
 		}
 	}
 

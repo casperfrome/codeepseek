@@ -4,7 +4,7 @@ using System.Net.Http;
 namespace MoonBridgeSwitcher;
 
 /// <summary>
-/// Owns the lifecycle of the moon-bridge control backend: probing whether it is
+/// Owns the lifecycle of the codeepseek control backend: probing whether it is
 /// already running, starting the <c>mbcontrol</c> Go binary hidden, and tearing it
 /// down on exit (only if this app was the one that started it).
 /// </summary>

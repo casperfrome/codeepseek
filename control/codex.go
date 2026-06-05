@@ -132,7 +132,7 @@ func (s *server) setCodexNative() error {
 	return os.WriteFile(s.globalCodexToml(), []byte(strings.Join(out, "\r\n")), 0o644)
 }
 
-// setCodexBridge routes the global Codex through Moon Bridge, rebuilding the
+// setCodexBridge routes the global Codex through codeepseek, rebuilding the
 // routing keys and [model_providers.moonbridge] table cleanly.
 func (s *server) setCodexBridge() error {
 	b, err := os.ReadFile(s.globalCodexToml())
@@ -167,7 +167,7 @@ func (s *server) setCodexBridge() error {
 	providerBlock := strings.Join([]string{
 		"",
 		"[model_providers.moonbridge]",
-		`name = "Moon Bridge"`,
+		`name = "codeepseek"`,
 		`base_url = "http://` + s.bridgeAddr() + `/v1"`,
 		`wire_api = "responses"`,
 	}, "\r\n")

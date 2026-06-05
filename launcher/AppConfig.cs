@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 namespace MoonBridgeSwitcher;
 
 /// <summary>
-/// Resolves and persists the location of the external moon-bridge backend
+/// Resolves and persists the location of the external codeepseek backend
 /// (the folder containing <c>config.yml</c> and <c>mb_config.json</c>) plus the
 /// local control-server endpoint the panel is served from.
 /// </summary>
@@ -13,7 +13,7 @@ sealed class AppConfig
     /// <summary>Folder that holds <c>config.yml</c> and <c>mb_config.json</c>.</summary>
     public string BackendDir { get; set; } = "";
 
-    /// <summary>Port the moon-bridge control server listens on.</summary>
+    /// <summary>Port the codeepseek control server listens on.</summary>
     public int Port { get; set; } = 38450;
 
     /// <summary>Full URL of the embedded config panel.</summary>
@@ -83,14 +83,14 @@ sealed class AppConfig
     }
 
     /// <summary>
-    /// Shows a folder picker so the user can locate the moon-bridge backend on first run.
+    /// Shows a folder picker so the user can locate the codeepseek backend on first run.
     /// On a valid selection the path is saved and <c>true</c> is returned.
     /// </summary>
     public bool PromptForBackendDir(IWin32Window? owner = null)
     {
         using var dialog = new FolderBrowserDialog
         {
-            Description = "Select the moon-bridge backend folder (contains config.yml and mb_config.json).",
+            Description = "Select the codeepseek backend folder (contains config.yml and mb_config.json).",
             UseDescriptionForTitle = true,
             ShowNewFolderButton = false
         };
@@ -102,7 +102,7 @@ sealed class AppConfig
         {
             MessageBox.Show(owner,
                 "The selected folder does not contain config.yml and mb_config.json.",
-                "Moon Bridge", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                "codeepseek", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return false;
         }
 

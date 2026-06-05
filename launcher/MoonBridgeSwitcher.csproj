@@ -17,7 +17,7 @@
     <!-- Package metadata -->
     <Version>1.0.0</Version>
     <Authors>casperfrome</Authors>
-    <Description>A lightweight Windows desktop launcher that starts the moon-bridge backend and embeds its model-config panel in a WebView2 window.</Description>
+    <Description>A lightweight Windows desktop launcher that starts the codeepseek backend and embeds its model-config panel in a WebView2 window.</Description>
     <RepositoryUrl>https://github.com/casperfrome/codeepseek</RepositoryUrl>
   </PropertyGroup>
   <ItemGroup>
