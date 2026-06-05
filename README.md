@@ -1,4 +1,4 @@
-# codeepseek
+# codeepseek — MoonBridge Switcher
 
 A lightweight Windows desktop launcher + control panel for **codeepseek**.
 Double-click it to start the bridge in the background and get a clean window for
@@ -20,8 +20,8 @@ MoonBridgeSwitcher.exe  ──starts──▶  mbcontrol.exe  ──starts──
 ```
 
 > **Heads up:** this project is the *launcher + control layer*. It does **not** include
-> the codeepseek backend itself. You must already have a codeepseek installation — the
-> folder containing `config.yml`, `mb_config.json`, and `moonbridge.exe`. See
+> the codeepseek backend itself. You need a working codeepseek installation — a
+> folder with `config.yml`, `mb_config.json`, and `moonbridge.exe`. See
 > [Backend requirement](#backend-requirement).
 
 ---
@@ -48,7 +48,7 @@ The control server listens on **`http://127.0.0.1:38450/`** and expects the brid
 ## Prerequisites
 
 - Windows 10 / 11 (x64)
-- [WebView2 Runtime](https://developer.microsoft.com/microsoft-edge/webview2/) (pre-installed on current Windows)
+- [WebView2 Runtime](https://developer.microsoft.com/microsoft-edge/webview2/) (pre-installed on Windows 10/11)
 - A working codeepseek backend (see above)
 - To **build** from source: [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) and [Go 1.25+](https://go.dev/dl/)
 
@@ -148,8 +148,8 @@ If you launched `mbcontrol.exe` separately, close that process instead.
 ## Security note
 
 `mb_config.json` contains real API keys and lives in your codeepseek backend directory —
-**not** in this repo. It (and `config.yml`, `bridge*.log`) is listed in `.gitignore`
-so it can never be committed by accident. Never paste your `mb_config.json` into the repo.
+**not** in this repo. They (along with `config.yml` and `bridge*.log`) are listed in `.gitignore`
+so they can never be committed accidentally. Never paste your `mb_config.json` into the repo.
 
 ## License
 
@@ -159,7 +159,7 @@ so it can never be committed by accident. Never paste your `mb_config.json` into
 
 <a name="中文"></a>
 
-# codeepseek（中文说明）
+# codeepseek — MoonBridge Switcher（中文说明）
 
 一个轻量的 Windows 桌面启动器 + 控制面板，用于 **codeepseek**。双击即可在后台启动桥服务，
 并打开一个简洁窗口来切换模型、编辑配置、切换 Codex 路由、查询 DeepSeek 余额——无需终端，
@@ -177,8 +177,8 @@ MoonBridgeSwitcher.exe  ──启动──▶  mbcontrol.exe  ──启动──
    (WebView2 窗口)                  (:38450 面板+API)          (:38440 桥服务)
 ```
 
-> **注意：** 本项目是*启动器 + 控制层*，**不包含** codeepseek 后端本身。你需要已经
-> 安装好 codeepseek——即包含 `config.yml`、`mb_config.json` 和 `moonbridge.exe`
+> **注意：** 本项目是*启动器 + 控制层*，**不包含** codeepseek 后端本身。你需要
+> 一个正常的 codeepseek 安装——即包含 `config.yml`、`mb_config.json` 和 `moonbridge.exe`
 > 的目录。详见[后端依赖](#后端依赖)。
 
 ## 功能
@@ -300,8 +300,8 @@ publish\
 ## 安全提示
 
 `mb_config.json` 含有真实 API Key，位于你的 codeepseek 后端目录中——**不在**本仓库内。
-它（以及 `config.yml`、`bridge*.log`）已列入 `.gitignore`，不会被误提交。请勿把
-`mb_config.json` 粘贴进仓库。
+它们（以及 `config.yml`、`bridge*.log`）已列入 `.gitignore`，不会被误提交。请勿把
+`mb_config.json` 粘贴到仓库中。
 
 ## 许可证
 

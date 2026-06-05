@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8" />
@@ -105,14 +105,6 @@
   <div class="card">
     <h2>Codex 全局模型（原生 GPT ↔ codeepseek）</h2>
     <div class="field">
-      <div class="hint" style="margin-bottom:10px">
-        此开关只改 <b>全局</b> Codex 配置 <code id="codexHome">~/.codex</code> 里的
-        <code>config.toml</code>（每次切换前自动备份为 <code>.mb-bak-时间戳</code>），
-        让你直接运行 <code>codex</code> / <code>codex app</code> 时在
-        <b>原生 GPT（<span id="nativeModel">gpt-5.5</span>）</b> 与
-        <b>走 codeepseek（DeepSeek 等）</b> 之间切换。
-        不影响 <code>4_run_codex.bat</code> 用的仓库专用配置。
-      </div>
       <div style="margin-bottom:12px">
         当前全局 Codex：<b id="codexModeText" style="color:var(--text)">检测中…</b>
       </div>
