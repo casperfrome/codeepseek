@@ -1,0 +1,26 @@
+# Build output
+[Bb]in/
+[Oo]bj/
+publish/
+[Pp]ublish/
+*.dll
+*.exe
+*.pdb
+
+# Visual Studio / Rider
+.vs/
+.idea/
+*.user
+*.suo
+*.userprefs
+
+# NuGet
+*.nupkg
+packages/
+
+# OS junk
+Thumbs.db
+.DS_Store
+
+# Local app data captured during runtime (WebView2 cache, config.json) lives in
+# %LocalAppData%\MoonBridgeSwitcher and is never part of the repo.
