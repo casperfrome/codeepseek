@@ -1,3 +1,3 @@
-module github.com/casperfrome/moon-bridge-switcher/control
+module github.com/casperfrome/codeepseek/control
 
 go 1.25

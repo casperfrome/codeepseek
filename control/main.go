@@ -126,7 +126,7 @@ func main() {
 
 	s.startBridge()
 	fmt.Println("============================================")
-	fmt.Printf("  Moon Bridge control panel: %s\n", prefix)
+	fmt.Printf("  codeepseek control panel: %s\n", prefix)
 	fmt.Printf("  Bridge target: %s\n", s.bridgeAddr())
 	fmt.Println("  Press Ctrl+C to stop the bridge + panel.")
 	fmt.Println("============================================")

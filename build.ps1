@@ -1,7 +1,7 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-    One-click build for Moon Bridge Switcher.
+    One-click build for codeepseek.
 
 .DESCRIPTION
     Builds both halves of the project into a single output folder:
@@ -78,7 +78,7 @@ if (-not (Test-Path $OutDir)) {
 $OutDir = (Resolve-Path $OutDir).Path
 
 Write-Host ''
-Write-Host 'Moon Bridge Switcher - one-click build' -ForegroundColor White
+Write-Host 'codeepseek - one-click build' -ForegroundColor White
 Write-Host "Output: $OutDir" -ForegroundColor DarkGray
 Write-Host ''
 

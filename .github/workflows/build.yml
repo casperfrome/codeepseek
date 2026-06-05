@@ -45,7 +45,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: moon-bridge-switcher-win-x64
+          name: codeepseek-win-x64
           path: |
             publish/MoonBridgeSwitcher.exe
             publish/mbcontrol.exe

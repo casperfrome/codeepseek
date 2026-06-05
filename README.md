@@ -1,4 +1,4 @@
-# 🌙 Moon Bridge Switcher
+# codeepseek
 
 A lightweight Windows desktop launcher + control panel for **moon-bridge**.
 Double-click it to start the bridge in the background and get a clean window for
@@ -159,7 +159,7 @@ so it can never be committed by accident. Never paste your `mb_config.json` into
 
 <a name="中文"></a>
 
-# 🌙 Moon Bridge Switcher（中文说明）
+# codeepseek（中文说明）
 
 一个轻量的 Windows 桌面启动器 + 控制面板，用于 **moon-bridge**。双击即可在后台启动桥服务，
 并打开一个简洁窗口来切换模型、编辑配置、切换 Codex 路由、查询 DeepSeek 余额——无需终端，
