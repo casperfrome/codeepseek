@@ -3,8 +3,8 @@
   <assemblyIdentity version="1.0.0.0" name="MoonBridgeSwitcher.app" />
   <application xmlns="urn:schemas-microsoft-com:asm.v3">
     <windowsSettings>
-      <dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/PM</dpiAware>
-      <dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
+      <!-- DPI awareness is configured via <ApplicationHighDpiMode> in the .csproj so that
+           ApplicationConfiguration.Initialize() applies it (avoids WinForms warning WFAC010). -->
       <activeCodePage xmlns="http://schemas.microsoft.com/SMI/2019/WindowsSettings">UTF-8</activeCodePage>
     </windowsSettings>
   </application>
