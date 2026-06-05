@@ -54,10 +54,39 @@ The control server listens on **`http://127.0.0.1:38450/`** and expects the brid
 
 ## Build
 
+### One-click (recommended)
+
+```powershell
+.\build.ps1
+```
+
+[`build.ps1`](build.ps1) builds **both** halves and drops them side by side in `.\publish`
+(`mbcontrol.exe` right next to `MoonBridgeSwitcher.exe`, exactly where the launcher
+looks for it). It checks that `go` and `dotnet` are on `PATH` first and fails early
+with a helpful message if either is missing.
+
+Options:
+
+| Flag | Effect |
+| --- | --- |
+| `-Clean` | Wipe the output folder before building. |
+| `-Output <dir>` | Output directory (default `publish`). |
+| `-SkipControl` | Don't build `mbcontrol.exe`. |
+| `-SkipLauncher` | Don't build `MoonBridgeSwitcher.exe`. |
+
+```powershell
+.\build.ps1 -Clean -Output dist    # fresh build into .\dist
+```
+
+> If PowerShell blocks the script with an execution-policy error, run it once as
+> `powershell -ExecutionPolicy Bypass -File .\build.ps1`.
+
+### Manual
+
 ```powershell
 # 1. Go control backend -> mbcontrol.exe
 cd control
-go build -o ..\mbcontrol.exe .
+go build -o ..\publish\mbcontrol.exe .
 cd ..
 
 # 2. C# launcher -> self-contained single-file exe in .\publish
@@ -152,10 +181,38 @@ MoonBridgeSwitcher.exe  ──启动──▶  mbcontrol.exe  ──启动──
 
 ## 构建
 
+### 一键构建（推荐）
+
+```powershell
+.\build.ps1
+```
+
+[`build.ps1`](build.ps1) 会**同时**构建两部分，并把它们并排输出到 `.\publish`
+（`mbcontrol.exe` 紧挨着 `MoonBridgeSwitcher.exe`，正是启动器查找它的位置）。脚本会先检查
+`go` 和 `dotnet` 是否在 `PATH` 上，缺失时会提前报错并给出提示。
+
+参数：
+
+| 参数 | 作用 |
+| --- | --- |
+| `-Clean` | 构建前清空输出目录。 |
+| `-Output <目录>` | 输出目录（默认 `publish`）。 |
+| `-SkipControl` | 不构建 `mbcontrol.exe`。 |
+| `-SkipLauncher` | 不构建 `MoonBridgeSwitcher.exe`。 |
+
+```powershell
+.\build.ps1 -Clean -Output dist    # 全新构建到 .\dist
+```
+
+> 若 PowerShell 因执行策略报错，可执行一次：
+> `powershell -ExecutionPolicy Bypass -File .\build.ps1`。
+
+### 手动构建
+
 ```powershell
 # 1. Go 控制后端 -> mbcontrol.exe
 cd control
-go build -o ..\mbcontrol.exe .
+go build -o ..\publish\mbcontrol.exe .
 cd ..
 
 # 2. C# 启动器 -> 自包含单文件 exe，输出到 .\publish
