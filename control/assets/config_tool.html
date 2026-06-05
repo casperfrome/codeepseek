@@ -108,6 +108,8 @@
       <div style="margin-bottom:12px">
         当前全局 Codex：<b id="codexModeText" style="color:var(--text)">检测中…</b>
       </div>
+      <div class="hint" style="margin-bottom:4px">原生模型：<span id="nativeModel">—</span></div>
+      <div class="hint">CODEX_HOME：<span id="codexHome">—</span></div>
     </div>
     <div class="actions">
       <button id="btnCodexNative">🔙 切换到原生 GPT</button>
@@ -456,8 +458,8 @@ function codexLog(msg, cls){
 async function refreshCodexMode(){
   try{
     const j = await api('/api/codex-mode');
-    if (j.home) $('codexHome').textContent = j.home;
-    if (j.nativeModel) $('nativeModel').textContent = j.nativeModel;
+    if (j.home && $('codexHome')) $('codexHome').textContent = j.home;
+    if (j.nativeModel && $('nativeModel')) $('nativeModel').textContent = j.nativeModel;
     const t = $('codexModeText');
     if (j.mode === 'native'){ t.textContent = '原生 GPT（' + (j.nativeModel||'gpt') + '）'; t.style.color = 'var(--ok)'; }
     else if (j.mode === 'bridge'){ t.textContent = '走 codeepseek（DeepSeek 等）'; t.style.color = 'var(--accent)'; }
