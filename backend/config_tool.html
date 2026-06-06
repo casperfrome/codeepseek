@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Moon Bridge 模型配置面板</title>
+<style>
+  :root {
+    --bg: #0f1320; --panel: #1a2032; --panel2: #232b42; --line: #313a57;
+    --text: #e6e9f2; --muted: #98a0b8; --accent: #6c8cff; --ok: #3fd07f;
+    --warn: #ffcf5c; --err: #ff6b6b; --radius: 12px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: "Segoe UI", "Microsoft YaHei", system-ui, sans-serif; font-size: 14px;
+  }
+  header {
+    position: sticky; top: 0; z-index: 5; background: var(--panel);
+    border-bottom: 1px solid var(--line); padding: 14px 20px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  header h1 { font-size: 17px; margin: 0; font-weight: 600; }
+  .badge {
+    margin-left: auto; display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 12px; border-radius: 999px; background: var(--panel2);
+    border: 1px solid var(--line); font-size: 12px; color: var(--muted);
+  }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--muted); }
+  .dot.ok { background: var(--ok); box-shadow: 0 0 8px var(--ok); }
+  .dot.err { background: var(--err); box-shadow: 0 0 8px var(--err); }
+  main { max-width: 860px; margin: 0 auto; padding: 22px 20px 60px; }
+  .card {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 18px 20px; margin-bottom: 18px;
+  }
+  .card h2 { font-size: 14px; margin: 0 0 14px; color: var(--muted); font-weight: 600;
+    text-transform: uppercase; letter-spacing: .04em; }
+  label { display: block; margin-bottom: 6px; color: var(--muted); font-size: 12.5px; }
+  input[type=text], input[type=number], select {
+    width: 100%; padding: 9px 11px; background: var(--panel2); color: var(--text);
+    border: 1px solid var(--line); border-radius: 8px; font-size: 13.5px; outline: none;
+  }
+  input:focus, select:focus { border-color: var(--accent); }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .row.one { grid-template-columns: 1fr; }
+  .field { margin-bottom: 14px; }
+  .toggles { display: flex; gap: 22px; flex-wrap: wrap; }
+  .toggle { display: flex; align-items: center; gap: 8px; color: var(--text); }
+  .toggle input { width: 16px; height: 16px; accent-color: var(--accent); }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  button {
+    padding: 10px 16px; border-radius: 9px; border: 1px solid var(--line);
+    background: var(--panel2); color: var(--text); font-size: 13.5px; cursor: pointer;
+    transition: .12s;
+  }
+  button:hover { border-color: var(--accent); }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+  button.primary:hover { filter: brightness(1.08); }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  .hint { color: var(--muted); font-size: 12px; margin-top: 4px; }
+  .chk { display: inline-flex; align-items: center; gap: 7px; color: var(--muted); font-size: 12.5px; }
+  details { margin-top: 14px; }
+  summary { cursor: pointer; color: var(--muted); font-size: 12.5px; }
+  pre {
+    background: #0b0e18; border: 1px solid var(--line); border-radius: 8px;
+    padding: 12px 14px; overflow: auto; font-size: 12px; color: #c8d0ea;
+    max-height: 340px; white-space: pre; margin: 10px 0 0;
+  }
+  #log, #codexLog {
+    background: #0b0e18; border: 1px solid var(--line); border-radius: 8px;
+    padding: 10px 12px; font-size: 12px; color: var(--muted); min-height: 22px;
+    white-space: pre-wrap; font-family: Consolas, monospace;
+  }
+  #log .ok, #codexLog .ok { color: var(--ok); }
+  #log .err, #codexLog .err { color: var(--err); }
+  #log .warn, #codexLog .warn { color: var(--warn); }
+  code { background: var(--panel2); border-radius: 4px; padding: 1px 5px; font-size: 12px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>🌙 Moon Bridge 模型配置</h1>
+  <span class="badge"><span id="dot" class="dot"></span><span id="statusText">检测中…</span></span>
+</header>
+
+<main>
+  <div class="card" id="balanceCard">
+    <h2>账户余额与消费</h2>
+    <div class="actions" style="align-items:flex-end">
+      <div style="flex:1; min-width:160px">
+        <label>DeepSeek 账户余额</label>
+        <div id="balanceVal" style="font-size:24px; font-weight:700; color:var(--ok)">—</div>
+      </div>
+      <div style="flex:1; min-width:160px">
+        <label>最近消费（自上次刷新）</label>
+        <div id="lastSpendVal" style="font-size:24px; font-weight:700; color:var(--warn)">—</div>
+      </div>
+      <button class="primary" id="btnRefreshBalance">🔄 刷新</button>
+    </div>
+    <div class="hint" style="margin-top:8px">「最近消费」= 两次刷新之间账户余额的差额（近似真实人民币）；首次刷新无对照，显示 —。余额来自 DeepSeek <code>/user/balance</code>，用当前模型的 API Key 查询。</div>
+    <div id="balanceLog" style="margin-top:6px"></div>
+  </div>
+
+  <div class="card">
+    <h2>Codex 全局模型（原生 GPT ↔ Moon Bridge）</h2>
+    <div class="field">
+      <div class="hint" style="margin-bottom:10px">
+        此开关只改 <b>全局</b> Codex 配置 <code id="codexHome">~/.codex</code> 里的
+        <code>config.toml</code>（每次切换前自动备份为 <code>.mb-bak-时间戳</code>），
+        让你直接运行 <code>codex</code> / <code>codex app</code> 时在
+        <b>原生 GPT（<span id="nativeModel">gpt-5.5</span>）</b> 与
+        <b>走 Moon Bridge（DeepSeek 等）</b> 之间切换。
+        不影响 <code>4_run_codex.bat</code> 用的仓库专用配置。
+      </div>
+      <div style="margin-bottom:12px">
+        当前全局 Codex：<b id="codexModeText" style="color:var(--text)">检测中…</b>
+      </div>
+    </div>
+    <div class="actions">
+      <button id="btnCodexNative">🔙 切换到原生 GPT</button>
+      <button id="btnCodexBridge">↩ 切回 Moon Bridge</button>
+    </div>
+    <div class="row" style="margin-top:16px">
+      <div>
+        <label for="codexAppPath">Codex 程序路径（codex / codex.cmd 或绝对路径）</label>
+        <input type="text" id="codexAppPath" spellcheck="false" placeholder="codex" />
+      </div>
+      <div>
+        <label for="codexWorkdir">Codex 工作目录（留空 = 用户主目录）</label>
+        <input type="text" id="codexWorkdir" spellcheck="false" placeholder="%USERPROFILE%" />
+      </div>
+    </div>
+    <div class="actions" style="margin-top:12px">
+      <button class="primary" id="btnOpenCodex">🚀 一键打开 Codex</button>
+      <span class="hint">用仓库专用 <code>CODEX_HOME</code> 启动 <code>codex app</code>（桌面版），确保走 Moon Bridge→DeepSeek。点击会先自动保存路径。</span>
+    </div>
+    <div style="margin-top:14px"><div id="codexLog">就绪。</div></div>
+  </div>
+
+  <div class="card">
+    <h2>激活模型</h2>
+    <div class="field">
+      <label for="presetSel">当前模型（切换后点“保存并重启”生效）</label>
+      <select id="presetSel"></select>
+    </div>
+    <div class="row">
+      <div>
+        <label for="reasoningSel">深度思考强度 (effort)</label>
+        <select id="reasoningSel"></select>
+      </div>
+      <div>
+        <label>扩展开关</label>
+        <div class="toggles" style="padding-top:6px">
+          <span class="toggle"><input type="checkbox" id="extDeepseek"><span>deepseek_v4</span></span>
+          <span class="toggle"><input type="checkbox" id="longContext"><span>长上下文 (1M)</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Provider 设置（当前模型）</h2>
+    <div class="field">
+      <label for="apiKey">API Key</label>
+      <input type="text" id="apiKey" placeholder="sk-..." autocomplete="off" spellcheck="false" />
+      <div class="hint">直接保存到 config.yml；切换到该模型前请先填好对应 Provider 的 Key。</div>
+    </div>
+    <div class="row">
+      <div>
+        <label for="baseUrl">Base URL</label>
+        <input type="text" id="baseUrl" spellcheck="false" />
+        <div class="hint" id="baseUrlHint"></div>
+      </div>
+      <div>
+        <label for="protocol">协议 protocol</label>
+        <select id="protocol">
+          <option value="anthropic">anthropic（推荐 · DeepSeek 原生端点）</option>
+          <option value="openai-chat">openai-chat（备选 · OpenAI 兼容端点）</option>
+        </select>
+      </div>
+    </div>
+    <details>
+      <summary>各协议在本项目（Codex → Moon Bridge → DeepSeek）的优缺点</summary>
+      <div class="hint" style="line-height:1.7; margin-top:8px">
+        <b style="color:var(--ok)">anthropic（推荐 / 默认）</b> — 端点 <code>https://api.deepseek.com/anthropic</code>。DeepSeek 官方为 agentic 编码推荐；完整工具调用；支持 <code>cache_control</code> 显式 Prompt 缓存断点；配合 <code>deepseek_v4</code> 扩展把 reasoning effort（high/xhigh→max）映射为深度思考。本仓库已实测可用。<br>
+        <b style="color:var(--accent)">openai-chat（备选）</b> — 端点 <code>https://api.deepseek.com</code>（<code>/v1/chat/completions</code> OpenAI 兼容）。生态最通用，可作 anthropic 端点异常时的回退；但 reasoning 透传 / 档位控制较弱，缓存为 DeepSeek 自动上下文缓存、无法用断点精细控制，保真度略低。<br>
+        <b style="color:var(--muted)">openai-response（已移除）</b> — OpenAI Responses API；<b>DeepSeek 不提供该端点</b>，仅 OpenAI 自身适用，故本面板不再列出。
+      </div>
+    </details>
+    <div class="row">
+      <div>
+        <label for="modelName">模型名 model</label>
+        <input type="text" id="modelName" spellcheck="false" />
+      </div>
+      <div>
+        <label for="providerName">Provider 名</label>
+        <input type="text" id="providerName" spellcheck="false" />
+      </div>
+    </div>
+    <div class="row">
+      <div>
+        <label for="ctxWin">context_window</label>
+        <input type="number" id="ctxWin" min="0" />
+      </div>
+      <div>
+        <label for="maxOut">max_output_tokens（0 = 不写）</label>
+        <input type="number" id="maxOut" min="0" />
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>操作</h2>
+    <div class="actions">
+      <button class="primary" id="btnSaveRestart">💾 保存并重启</button>
+      <button id="btnSave">仅保存</button>
+      <button id="btnRestart">↻ 仅重启桥</button>
+      <button id="btnRegen">重新生成 Codex 配置</button>
+      <label class="chk"><input type="checkbox" id="syncCodex" checked> 保存并重启时同步生成 Codex 配置</label>
+    </div>
+    <div style="margin-top:14px"><div id="log">就绪。</div></div>
+    <details>
+      <summary>预览将写入的 config.yml</summary>
+      <pre id="yamlPreview"></pre>
+    </details>
+  </div>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+let state = null;
+
+function q(s){ // YAML 字符串：含特殊字符则加引号
+  if (s === "" || /[:#\-?{}\[\],&*!|>'"%@` ]/.test(s) || /^\d/.test(s)) return '"' + String(s).replace(/"/g,'\\"') + '"';
+  return s;
+}
+
+// 仅渲染“激活模型”——与现有 config.yml 同构（单模型单 provider）
+function buildYaml(st){
+  const p = st.presets[st.active.preset];
+  const L = [];
+  L.push('# yaml-language-server: $schema=./config.schema.json');
+  L.push('mode: ' + q(st.mode || 'Transform'));
+  L.push('');
+  L.push('server:');
+  L.push('  addr: ' + q(st.server.addr));
+  L.push('');
+  L.push('models:');
+  L.push('  ' + p.model + ':');
+  L.push('    context_window: ' + (p.contextWindow|0));
+  if ((p.maxOutput|0) > 0) L.push('    max_output_tokens: ' + (p.maxOutput|0));
+  const levels = p.reasoningLevels || [];
+  if (levels.length){
+    const eff = st.active.reasoning || levels[0].effort;
+    L.push('    default_reasoning_level: ' + q(eff));
+    L.push('    supported_reasoning_levels:');
+    for (const lv of levels){
+      L.push('      - effort: ' + q(lv.effort));
+      L.push('        description: ' + q(lv.description || lv.effort));
+    }
+    if (p.supportsReasoningSummaries){
+      L.push('    supports_reasoning_summaries: true');
+      L.push('    default_reasoning_summary: ' + q('auto'));
+    }
+  }
+  const ex = p.extensions || {};
+  if (ex.deepseek_v4){
+    L.push('    extensions:');
+    L.push('      deepseek_v4:'); L.push('        enabled: true');
+  }
+  L.push('');
+  L.push('providers:');
+  L.push('  ' + p.provider + ':');
+  L.push('    base_url: ' + q(p.baseUrl));
+  L.push('    api_key: ' + q(p.apiKey || ''));
+  L.push('    protocol: ' + q(p.protocol || 'anthropic'));
+  L.push('    offers:');
+  L.push('      - model: ' + p.model);
+  L.push('');
+  L.push('routes:');
+  L.push('  ' + (st.defaults.alias || 'moonbridge') + ':');
+  L.push('    model: ' + p.model);
+  L.push('    provider: ' + p.provider);
+  L.push('');
+  L.push('defaults:');
+  L.push('  model: ' + (st.defaults.alias || 'moonbridge'));
+  L.push('  max_tokens: ' + (st.defaults.maxTokens|0));
+  L.push('');
+  return L.join('\n');
+}
+
+function renderPresetList(){
+  const sel = $('presetSel'); sel.innerHTML = '';
+  for (const [id, p] of Object.entries(state.presets)){
+    const o = document.createElement('option');
+    o.value = id; o.textContent = p.displayName + '  ·  ' + p.model;
+    sel.appendChild(o);
+  }
+  sel.value = state.active.preset;
+}
+
+function renderActive(){
+  const p = state.presets[state.active.preset];
+  // reasoning
+  const rs = $('reasoningSel'); rs.innerHTML = '';
+  const levels = p.reasoningLevels || [];
+  if (!levels.length){
+    const o = document.createElement('option'); o.value=''; o.textContent='（该模型无推理档位）';
+    rs.appendChild(o); rs.disabled = true;
+  } else {
+    rs.disabled = false;
+    for (const lv of levels){
+      const o = document.createElement('option'); o.value = lv.effort; o.textContent = lv.effort + ' — ' + (lv.description||'');
+      rs.appendChild(o);
+    }
+    if (!levels.find(l=>l.effort===state.active.reasoning)) state.active.reasoning = levels[0].effort;
+    rs.value = state.active.reasoning;
+  }
+  $('extDeepseek').checked = !!(p.extensions && p.extensions.deepseek_v4);
+  $('longContext').checked = (p.contextWindow|0) >= 1000000;
+  $('apiKey').value = p.apiKey || '';
+  $('baseUrl').value = p.baseUrl || '';
+  $('protocol').value = p.protocol || 'anthropic';
+  $('modelName').value = p.model || '';
+  $('providerName').value = p.provider || '';
+  $('ctxWin').value = p.contextWindow || 0;
+  $('maxOut').value = p.maxOutput || 0;
+  updateBaseUrlHint();
+  refreshYaml();
+}
+
+// 把表单写回 state（当前激活 preset）
+function pullForm(){
+  const p = state.presets[state.active.preset];
+  if (!$('reasoningSel').disabled) state.active.reasoning = $('reasoningSel').value;
+  p.extensions = p.extensions || {};
+  p.extensions.deepseek_v4 = $('extDeepseek').checked;
+  p.apiKey = $('apiKey').value.trim();
+  p.baseUrl = $('baseUrl').value.trim();
+  p.protocol = $('protocol').value;
+  p.model = $('modelName').value.trim();
+  p.provider = $('providerName').value.trim();
+  p.contextWindow = parseInt($('ctxWin').value || '0', 10);
+  p.maxOutput = parseInt($('maxOut').value || '0', 10);
+  // Top-level (non-preset) settings persisted via /api/save.
+  state.codexAppPath = $('codexAppPath').value.trim();
+  state.codexWorkdir = $('codexWorkdir').value.trim();
+}
+
+// Base URL hint depends on the selected provider protocol.
+function updateBaseUrlHint(){
+  const h = $('baseUrlHint');
+  if ($('protocol').value === 'openai-chat'){
+    h.textContent = 'DeepSeek OpenAI 兼容端点应为 https://api.deepseek.com（去掉 /anthropic）。';
+  } else {
+    h.textContent = '';
+  }
+}
+
+function refreshYaml(){ pullForm(); $('yamlPreview').textContent = buildYaml(state); }
+
+function log(msg, cls){
+  const el = $('log');
+  el.innerHTML = '<span class="'+(cls||'')+'">' + msg + '</span>';
+}
+
+async function api(path, opts){
+  const r = await fetch(path, opts);
+  const t = await r.text();
+  let j; try { j = JSON.parse(t); } catch { j = { ok: r.ok, message: t }; }
+  if (!r.ok || j.ok === false) throw new Error(j.message || ('HTTP ' + r.status));
+  return j;
+}
+
+async function doSave(){
+  pullForm();
+  const yaml = buildYaml(state);
+  if (!state.presets[state.active.preset].apiKey){
+    log('⚠ 当前模型的 API Key 为空，DeepSeek/Claude 等会鉴权失败。仍可保存。', 'warn');
+  }
+  await api('/api/save', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ json: state, yaml })
+  });
+  return yaml;
+}
+
+async function pollStatus(){
+  try{
+    const j = await api('/api/status');
+    const ok = j.listening;
+    $('dot').className = 'dot ' + (ok ? 'ok' : 'err');
+    $('statusText').textContent = ok ? ('桥运行中 · ' + (j.addr||'38440')) : (j.processAlive ? '桥进程在，端口未就绪…' : '桥未运行');
+  }catch{
+    $('dot').className = 'dot err'; $('statusText').textContent = '控制服务器无响应';
+  }
+}
+
+function busy(b){ document.querySelectorAll('button').forEach(x=>x.disabled=b); }
+
+// ---- events ----
+$('presetSel').addEventListener('change', e => {
+  pullForm();
+  state.active.preset = e.target.value;
+  renderActive();
+});
+['reasoningSel','extDeepseek','apiKey','baseUrl','protocol','modelName','providerName','ctxWin','maxOut']
+  .forEach(id => $(id).addEventListener('input', refreshYaml));
+$('protocol').addEventListener('change', updateBaseUrlHint);
+// 长上下文开关 ↔ context_window 双向同步（开=1M，关=128K）
+$('longContext').addEventListener('change', () => {
+  $('ctxWin').value = $('longContext').checked ? 1000000 : 128000;
+  refreshYaml();
+});
+$('ctxWin').addEventListener('input', () => {
+  $('longContext').checked = (parseInt($('ctxWin').value || '0', 10) >= 1000000);
+});
+
+$('btnSave').addEventListener('click', async () => {
+  busy(true); log('保存中…');
+  try { await doSave(); log('✓ 已保存 config.yml（旧文件备份为 config.yml.bak）。重启后生效。', 'ok'); }
+  catch(e){ log('✗ 保存失败：' + e.message, 'err'); }
+  busy(false);
+});
+
+$('btnRestart').addEventListener('click', async () => {
+  busy(true); log('重启桥中…');
+  try { const j = await api('/api/restart', { method:'POST' }); log('✓ 桥已重启（pid ' + (j.pid||'?') + '）。', 'ok'); }
+  catch(e){ log('✗ 重启失败：' + e.message, 'err'); }
+  setTimeout(pollStatus, 800); busy(false);
+});
+
+$('btnRegen').addEventListener('click', async () => {
+  busy(true); log('生成 Codex 配置中…');
+  try { const j = await api('/api/regen-codex', { method:'POST' });
+        log('✓ Codex 配置已生成：model=' + (j.model||'?') + '\n' + (j.output||''), 'ok'); }
+  catch(e){ log('✗ 生成失败：' + e.message, 'err'); }
+  busy(false);
+});
+
+$('btnSaveRestart').addEventListener('click', async () => {
+  busy(true);
+  try {
+    log('保存中…'); await doSave();
+    log('重启桥中…'); const r = await api('/api/restart', { method:'POST' });
+    let msg = '✓ 已保存并重启（pid ' + (r.pid||'?') + '）。';
+    if ($('syncCodex').checked){
+      log('同步生成 Codex 配置…');
+      const c = await api('/api/regen-codex', { method:'POST' });
+      msg += ' Codex→' + (c.model||'?') + '。';
+    }
+    log(msg, 'ok');
+  } catch(e){ log('✗ 失败：' + e.message, 'err'); }
+  setTimeout(pollStatus, 800); busy(false);
+});
+
+// ---- Codex 全局模型切换 ----
+function codexLog(msg, cls){
+  const el = $('codexLog');
+  el.innerHTML = '<span class="'+(cls||'')+'">' + msg + '</span>';
+}
+
+async function refreshCodexMode(){
+  try{
+    const j = await api('/api/codex-mode');
+    if (j.home) $('codexHome').textContent = j.home;
+    if (j.nativeModel) $('nativeModel').textContent = j.nativeModel;
+    const t = $('codexModeText');
+    if (j.mode === 'native'){ t.textContent = '原生 GPT（' + (j.nativeModel||'gpt') + '）'; t.style.color = 'var(--ok)'; }
+    else if (j.mode === 'bridge'){ t.textContent = '走 Moon Bridge（DeepSeek 等）'; t.style.color = 'var(--accent)'; }
+    else { t.textContent = '未找到全局 config.toml'; t.style.color = 'var(--warn)'; }
+  }catch(e){ $('codexModeText').textContent = '检测失败：' + e.message; $('codexModeText').style.color = 'var(--err)'; }
+}
+
+$('btnCodexNative').addEventListener('click', async () => {
+  busy(true); codexLog('切换到原生 GPT 中…');
+  try { const j = await api('/api/codex-native', { method:'POST' });
+        codexLog('✓ 已切到原生 GPT（model=' + (j.model||'?') + '）。现在直接运行 codex / codex app 即用 GPT。', 'ok'); }
+  catch(e){ codexLog('✗ 切换失败：' + e.message, 'err'); }
+  await refreshCodexMode(); busy(false);
+});
+
+$('btnCodexBridge').addEventListener('click', async () => {
+  busy(true); codexLog('切回 Moon Bridge 中…');
+  try { await api('/api/codex-bridge', { method:'POST' });
+        codexLog('✓ 已切回 Moon Bridge。保持本桥服务开着，运行 codex 即走 DeepSeek 等。', 'ok'); }
+  catch(e){ codexLog('✗ 切换失败：' + e.message, 'err'); }
+  await refreshCodexMode(); busy(false);
+});
+
+// ---- 账户余额与消费 ----
+function balanceLog(msg, cls){
+  const color = cls==='ok' ? 'var(--ok)' : cls==='err' ? 'var(--err)' : 'var(--muted)';
+  $('balanceLog').innerHTML = msg ? '<span style="font-size:12px;color:'+color+'">'+msg+'</span>' : '';
+}
+function fmtMoney(v, cur){
+  const sym = (!cur || cur === 'CNY') ? '¥' : (cur + ' ');
+  return sym + Number(v || 0).toFixed(2);
+}
+async function refreshBalance(){
+  balanceLog('查询余额中…');
+  try{
+    const j = await api('/api/deepseek-balance');
+    $('balanceVal').textContent = fmtMoney(j.balance, j.currency);
+    if (j.hasPrev){
+      const spend = Number(j.lastSpend) < 0 ? 0 : Number(j.lastSpend);
+      $('lastSpendVal').textContent = fmtMoney(spend, j.currency);
+    } else {
+      $('lastSpendVal').textContent = '—';
+    }
+    balanceLog('✓ 已更新（' + new Date().toLocaleTimeString() + '）。', 'ok');
+  }catch(e){
+    balanceLog('✗ 查询失败：' + e.message, 'err');
+  }
+}
+$('btnRefreshBalance').addEventListener('click', async () => { busy(true); await refreshBalance(); busy(false); });
+
+// ---- 一键打开 Codex ----
+$('btnOpenCodex').addEventListener('click', async () => {
+  busy(true); codexLog('保存路径并启动 Codex 桌面 App…');
+  try {
+    await doSave();
+    const j = await api('/api/open-codex', { method:'POST' });
+    codexLog('✓ 已启动 Codex（' + (j.path||'codex') + ' app）\n工作目录：' + (j.workdir||'') +
+             '\nCODEX_HOME：' + (j.codexHome||'') + '\n（首次启动会自动下载安装 Codex 桌面程序）', 'ok');
+  } catch(e){ codexLog('✗ 启动失败：' + e.message, 'err'); }
+  busy(false);
+});
+
+// ---- init ----
+(async function init(){
+  try{
+    state = await api('/api/state');
+    if (!state.presets || !state.active) throw new Error('mb_config.json 结构异常');
+    renderPresetList(); renderActive();
+    $('codexAppPath').value = state.codexAppPath || 'codex';
+    $('codexWorkdir').value = state.codexWorkdir || '';
+    log('配置已载入。', 'ok');
+  }catch(e){ log('✗ 载入 mb_config.json 失败：' + e.message, 'err'); }
+  pollStatus(); setInterval(pollStatus, 3000);
+  refreshCodexMode();
+  refreshBalance();
+})();
+</script>
+</body>
+</html>

@@ -75,11 +75,16 @@ sealed class AppConfig
         var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         var exeDir = AppContext.BaseDirectory;
 
+        // Preferred: backend subfolder inside the codeepseek repo / distribution root.
+        yield return @"D:\moon_bridge_swticher\codeepseek\backend";
+        // Relative to the launcher exe (works when exe is published into codeepseek\launcher\bin\...).
+        yield return Path.Combine(exeDir, "..", "..", "..", "..", "..", "backend");
+        // Sibling of the exe (works in single-file publish next to backend\).
+        yield return Path.Combine(exeDir, "backend");
+        // Legacy paths kept as fallback.
         yield return @"D:\moon_bridge_main\moon-bridge";
         yield return Path.Combine(home, "moon_bridge_main", "moon-bridge");
         yield return Path.Combine(home, "moon-bridge");
-        yield return Path.Combine(exeDir, "moon-bridge");
-        yield return Path.Combine(exeDir, "..", "moon-bridge");
     }
 
     /// <summary>

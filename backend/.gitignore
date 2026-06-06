@@ -1,0 +1,58 @@
+bin/
+.cache/
+coverage.out
+*.test
+__pycache__/
+.env
+.DS_Store
+
+# Agent / AI assistant local files
+.planning/
+helloagents/
+AGENTS.md
+CLAUDE.md
+.codex
+.codex/
+.claude
+.claude/
+.agents
+.agents/
+.cursor
+.cursor/
+.continue
+.continue/
+.gemini
+.gemini/
+.idea/
+.aider*
+.roo
+.roo/
+.mcp.json
+FakeHome/
+FakeHome
+
+# dotenv files
+.env.test
+.moonbridge.env
+
+# local runtime config with provider secrets
+config.yml
+config.yaml
+/data/
+/trace/
+.env
+docker-compose.yml
+
+# config schema dumps
+*.schema.json
+
+# npm
+node_modules/
+build/
+.wrangler/
+# WebUI build artifacts (source in webui/)
+
+# Wrangler dev vars
+.dev.vars
+/moonbridge
+logs/
