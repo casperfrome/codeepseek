@@ -127,7 +127,7 @@
     </div>
     <div class="actions" style="margin-top:12px">
       <button class="primary" id="btnOpenCodex">🚀 一键打开 Codex</button>
-      <span class="hint">用仓库专用 <code>CODEX_HOME</code> 启动 <code>codex app</code>（桌面版），确保走 codeepseek→DeepSeek。点击会先自动保存路径。</span>
+      <span class="hint">使用全局 Codex 配置启动 <code>codex app</code>（桌面版），并先同步路由到 codeepseek→DeepSeek。点击会先自动保存路径。</span>
     </div>
     <div style="margin-top:14px"><div id="codexLog">就绪。</div></div>
   </div>
@@ -516,8 +516,9 @@ $('btnOpenCodex').addEventListener('click', async () => {
   try {
     await doSave();
     const j = await api('/api/open-codex', { method:'POST' });
-    codexLog('✓ 已启动 Codex（' + (j.path||'codex') + ' app）\n工作目录：' + (j.workdir||'') +
-             '\nCODEX_HOME：' + (j.codexHome||'') + '\n（首次启动会自动下载安装 Codex 桌面程序）', 'ok');
+    codexLog('✓ 已启动 Codex（' + (j.path||'codex') + ' app，model=' + (j.model||'?') + '）\n工作目录：' + (j.workdir||'') +
+             '\n全局 CODEX_HOME：' + (j.codexHome||'') + '\n模型目录：' + (j.catalogPath||'') +
+             '\n（首次启动会自动下载安装 Codex 桌面程序）', 'ok');
   } catch(e){ codexLog('✗ 启动失败：' + e.message, 'err'); }
   busy(false);
 });

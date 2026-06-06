@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
@@ -55,6 +56,9 @@ func (s *server) regenCodex() (string, error) {
 		"-codex-base-url", "http://"+s.bridgeAddr()+"/v1",
 		"-codex-home", s.codexHome, "-config", "config.yml")
 	if err != nil {
+		return "", err
+	}
+	if err := stripConflictingCatalogBaseInstructions(filepath.Join(s.codexHome, "models_catalog.json")); err != nil {
 		return "", err
 	}
 	if err := os.WriteFile(filepath.Join(s.codexHome, "config.toml"), []byte(toml), 0o644); err != nil {
@@ -181,4 +185,51 @@ func firstLine(s string) string {
 		return s[:i]
 	}
 	return s
+}
+
+const generatedCodexPlanConflictMarker = "Unless the user explicitly asks for a plan"
+
+// stripConflictingCatalogBaseInstructions removes the old generated Codex prompt
+// template from Moon Bridge catalogs while preserving explicit user overrides.
+func stripConflictingCatalogBaseInstructions(path string) error {
+	b, err := os.ReadFile(path)
+	if err != nil {
+		return err
+	}
+
+	var catalog map[string]any
+	if err := json.Unmarshal(b, &catalog); err != nil {
+		return err
+	}
+
+	models, ok := catalog["models"].([]any)
+	if !ok {
+		return nil
+	}
+
+	changed := false
+	for _, raw := range models {
+		model, ok := raw.(map[string]any)
+		if !ok {
+			continue
+		}
+		instructions, ok := model["base_instructions"].(string)
+		if !ok {
+			continue
+		}
+		if strings.Contains(instructions, generatedCodexPlanConflictMarker) {
+			delete(model, "base_instructions")
+			changed = true
+		}
+	}
+	if !changed {
+		return nil
+	}
+
+	data, err := json.MarshalIndent(catalog, "", "  ")
+	if err != nil {
+		return err
+	}
+	data = append(data, '\n')
+	return os.WriteFile(path, data, 0o644)
 }
