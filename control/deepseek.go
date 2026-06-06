@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -80,8 +81,8 @@ func (s *server) deepseekBalance() (map[string]any, error) {
 	}, nil
 }
 
-// openCodex launches `codex app <workdir>` with CODEX_HOME pointed at the
-// repo-local .codex so it routes through codeepseek regardless of the global toggle.
+// openCodex launches `codex app <workdir>` using the global Codex home so the
+// desktop app keeps its normal settings/plugins while routing through codeepseek.
 func (s *server) openCodex() (map[string]any, error) {
 	appPath, workdir := s.codexAppPath, s.codexWorkdir
 	if cfg, err := loadMBConfig(s.root); err == nil {
@@ -102,16 +103,27 @@ func (s *server) openCodex() (map[string]any, error) {
 		return nil, fmt.Errorf("工作目录不存在: %s", workdir)
 	}
 
+	model, err := s.regenCodex()
+	if err != nil {
+		return nil, err
+	}
+	if err := s.setCodexBridge(); err != nil {
+		return nil, err
+	}
+
 	cmd := exec.Command(appPath, "app", workdir)
-	cmd.Env = append(os.Environ(), "CODEX_HOME="+s.codexHome)
+	cmd.Env = append(os.Environ(), "CODEX_HOME="+s.globalCodexHome)
 	if err := cmd.Start(); err != nil {
 		return nil, err
 	}
 	return map[string]any{
-		"ok":        true,
-		"path":      appPath,
-		"workdir":   workdir,
-		"codexHome": s.codexHome,
-		"pid":       cmd.Process.Pid,
+		"ok":              true,
+		"path":            appPath,
+		"workdir":         workdir,
+		"codexHome":       s.globalCodexHome,
+		"catalogPath":     filepath.Join(s.codexHome, "models_catalog.json"),
+		"model":           model,
+		"globalCodexHome": s.globalCodexHome,
+		"pid":             cmd.Process.Pid,
 	}, nil
 }
