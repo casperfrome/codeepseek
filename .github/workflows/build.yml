@@ -42,18 +42,31 @@ jobs:
         run: dotnet publish launcher/MoonBridgeSwitcher.csproj -c Release -r win-x64 -o publish
 
       # ---- artifacts / release ----
+      - name: Package release zip
+        shell: pwsh
+        run: |
+          $zipRoot = Join-Path $PWD 'publish\zip-root'
+          if (Test-Path $zipRoot) {
+            Remove-Item -Recurse -Force $zipRoot
+          }
+          New-Item -ItemType Directory -Path $zipRoot | Out-Null
+
+          Copy-Item publish\MoonBridgeSwitcher.exe $zipRoot
+          Copy-Item publish\mbcontrol.exe $zipRoot
+          Copy-Item README.md $zipRoot
+          Copy-Item LICENSE $zipRoot
+
+          Compress-Archive -Path (Join-Path $zipRoot '*') -DestinationPath publish\codeepseek-win-x64.zip -Force
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: codeepseek-win-x64
-          path: |
-            publish/MoonBridgeSwitcher.exe
-            publish/mbcontrol.exe
+          path: publish/codeepseek-win-x64.zip
 
       - name: Attach to release
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
-          files: |
-            publish/MoonBridgeSwitcher.exe
-            publish/mbcontrol.exe
+          generate_release_notes: true
+          files: publish/codeepseek-win-x64.zip
